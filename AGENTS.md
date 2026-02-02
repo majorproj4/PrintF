@@ -6,14 +6,14 @@ printf is a professional, real-time file-sharing platform that allows users to i
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Database & Storage**: Supabase (PostgreSQL + Storage)
-- **Real-time**: Supabase Realtime (Postgres Changes)
+- **Real-time**: Supabase Realtime (Postgres Changes + Broadcast + Presence)
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
 - **QR Generation**: qrcode
 
 ## Architecture
-- `src/app/page.tsx`: Main desktop interface, generates session, displays QR code, and listens for file uploads via Supabase Realtime.
-- `src/app/session/[id]/page.tsx`: Mobile upload interface, validates session, handles file uploads to Supabase Storage, and records metadata in the database.
+- `src/app/page.tsx`: Main desktop interface. Handles session generation, QR code display, file/message listening, device presence list, connection approval, and local history.
+- `src/app/session/[id]/page.tsx`: Mobile upload interface. Handles session validation, file uploads to Supabase Storage, and metadata recording. Broadcasts upload progress.
 - `src/lib/supabase.ts`: Supabase client configuration.
 - `src/components/QRCodeDisplay.tsx`: Canvas-based QR code generator.
 
@@ -22,14 +22,17 @@ printf is a professional, real-time file-sharing platform that allows users to i
 - Dark mode primary aesthetic (zinc-950).
 - Smooth animations with Framer Motion.
 - Minimal, glassmorphic UI.
+- Privacy-first design with session locking.
 
 ## Project Guidelines
 - Sessions expire after 15 minutes.
 - Files are scoped by `session_id`.
 - Real-time updates are handled by subscribing to the `files` table changes.
 - Downloads are provided via Supabase Signed URLs for security.
+- Automatic locking after the first device connection approval.
 
 ## Common Patterns
 - Real-time subscription: `supabase.channel(id).on('postgres_changes', ...).subscribe()`
-- File upload: `supabase.storage.from(bucket).upload(path, file)`
-- Layout animations: `motion.div` with `AnimatePresence` for list transitions.
+- Broadcast messages: `channel.send({ type: 'broadcast', event: '...', payload: { ... } })`
+- Presence tracking: `channel.on('presence', { event: 'sync' }, ...).track({ ... })`
+- Local transfer history using browser `localStorage`.
