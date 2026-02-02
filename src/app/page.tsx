@@ -274,7 +274,7 @@ export default function Home() {
             <div className="mt-6 pt-6 border-t border-zinc-800">
               <div className="flex items-center gap-3 text-emerald-400/80">
                 <CheckCircle2 className="w-4 h-4" />
-                <span className="text-xs font-medium">Real-time connection active</span>
+                <span className="text-xs font-medium">Real-time connection active for 15 min</span>
               </div>
             </div>
           </motion.div>
